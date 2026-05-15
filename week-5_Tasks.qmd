@@ -1,0 +1,154 @@
+---
+title: "GEO 880 - week 5 - Tasks and Inputs"
+author: "Lars Weidinger"
+date: "today"
+format: 
+  html:
+    fig_caption: true
+    fig-align: center
+    highlight: tango
+    number-sections: false
+    code-fold: true
+    theme: lumen
+    embed-resources: true
+    toc: true
+    toc_depth: 2
+    toc_float: true
+execute:                      # Set global options for execution of code blocks
+  echo: true                  # False = no code printed
+  warning: false
+  message: false
+editor: visual
+---
+
+<!-- The following html code fragment produces fully justified text alignment -->
+
+```{=html}
+<style>
+body {text-align: justify}
+</style>
+```
+
+# Preliminaries
+
+## Set Options
+
+```{r}
+options(warning = FALSE)    # Don't show warnings
+```
+
+## Install or Load packages
+
+```{r}
+#| code-fold: show
+library(pacman)
+
+# Load and if not found in the library will attempt to install the package
+pacman::p_load(here,
+               sf,
+               readr,
+               tmap,
+               dplyr,
+               ggplot2,
+               tidyr,
+               SimilarityMeasures,
+               lubridate,
+               install = TRUE)
+```
+
+## Store relevant CRS
+
+```{r}
+crs_lv03  <- 21781
+crs_lv95  <- 2056
+crs_wgs84 <- 4326
+```
+
+# Task 1: Write your own functions
+## 1)
+A function which calculates a persons BMI based on their height and weight.
+```{r}
+BMI <- function(weight, height) {
+    BMI_value <- weight / (height^2)
+    return(BMI_value)
+}
+
+BMI(weight = 78, height = 1.8)
+```
+
+## 2)
+A function which converts degrees Celsius to Fahrenheit
+```{r}
+C_to_F <- function(celsius) {
+  (celsius * (5/9) + 32)
+}
+
+C_to_F(celsius = 20)
+```
+
+## 3)
+A function which calculates the (Euclidean) distance between two sets of coordinates.
+```{r}
+fundis <- function(x1, y1, x2, y2) {
+  sqrt( ((x2-x1)^2) + ((y2-y1)^2) )
+}
+
+fundis(x1 = 10, y1 = 0, x2 = 0, y2 = 0)
+```
+
+# Task 2: Prepare Analysis
+```{r}
+wildschwein <- read_delim("data/wildschwein_BE_2056.csv", ",")
+
+# Careful! What Timezone is assumed? --> UTC
+wildschwein <- wildschwein |>
+    filter(
+      TierName == "Rosa" | TierName == "Sabi", 
+      DatetimeUTC >= "2015-04-01", 
+      DatetimeUTC < "2015-04-15"
+      )
+```
+
+# Task 3: Create Join Key
+```{r}
+wildschwein <- wildschwein |>
+  mutate(
+    DatetimeRound = round_date(DatetimeUTC, unit = "15 minutes") # so that we can later match them exactely
+    )
+```
+
+# Task 4: Measuring distance at concurrent locations
+## 1) Split
+```{r}
+rosa <- wildschwein |>
+  filter(TierName == "Rosa")
+
+sabi <- wildschwein |>
+  filter(TierName == "Sabi")
+```
+
+## 2) Join
+```{r}
+
+```
+
+## 3) Euclidian Distance
+```{r}
+
+```
+
+## 4) Spatially Close
+```{r}
+
+```
+
+# Task 5: Visualize data
+```{r}
+
+```
+
+# Task 6 (optional): Visualize data as timecube
+```{r}
+
+```
+
