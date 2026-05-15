@@ -53,6 +53,7 @@ pacman::p_load(here,
                tidyr,
                SimilarityMeasures,
                lubridate,
+               plotly,
                install = TRUE)
 ```
 
@@ -80,7 +81,7 @@ BMI(weight = 78, height = 1.8)
 A function which converts degrees Celsius to Fahrenheit
 ```{r}
 C_to_F <- function(celsius) {
-  (celsius * (5/9) + 32)
+  (celsius * (9/5) + 32)
 }
 
 C_to_F(celsius = 20)
@@ -113,7 +114,7 @@ wildschwein <- wildschwein |>
 ```{r}
 wildschwein <- wildschwein |>
   mutate(
-    DatetimeRound = round_date(DatetimeUTC, unit = "15 minutes") # so that we can later match them exactely
+    DatetimeRound = lubdridate::round_date(DatetimeUTC, unit = "15 minutes") # so that we can later match them exactely
     )
 ```
 
@@ -129,26 +130,35 @@ sabi <- wildschwein |>
 
 ## 2) Join
 ```{r}
+# we can do a full join so that everything is included
 
+wildschwein_join <- full_join(rosa, sabi, by = c("DatetimeRound"), suffix = c("_rosa", "_sabi"))
 ```
 
-## 3) Euclidian Distance
+## 3 & 4) Euclidian Distance & Spatially Close
 ```{r}
-
-```
-
-## 4) Spatially Close
-```{r}
-
+wildschwein_join <- wildschwein_join |>
+  mutate(
+    distance = sqrt( (N_rosa - N_sabi)^2 + (E_rosa - E_sabi)^2 ), # distance between the two fixes that are temporally close
+    meet = distance < 100 # should give T/F
+  )
 ```
 
 # Task 5: Visualize data
 ```{r}
+wildschwein_meet <- wildschwein_join |>
+  filter(meet)
 
-```
-
-# Task 6 (optional): Visualize data as timecube
-```{r}
-
+ggplot(wildschwein_meet) +
+  
+  geom_point(data = rosa, aes(E, N, colour = "rosa"), alpha = 0.5) + # this is only rosa
+  geom_point(data = sabi, aes(E, N, colour = "sabi"), alpha = 0.5) + # this is only sabi
+  
+  geom_point(aes(x = E_rosa, y = N_rosa, fill = "rosa")) + 
+  geom_point(aes(x = E_sabi, y = N_sabi, fill = "sabi")) +
+  
+  coord_equal() +
+  
+  theme_minimal()
 ```
 
