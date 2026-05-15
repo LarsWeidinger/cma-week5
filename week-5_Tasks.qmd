@@ -161,4 +161,3 @@ ggplot(wildschwein_meet) +
   
   theme_minimal()
 ```
-
