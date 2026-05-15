@@ -114,7 +114,7 @@ wildschwein <- wildschwein |>
 ```{r}
 wildschwein <- wildschwein |>
   mutate(
-    DatetimeRound = lubdridate::round_date(DatetimeUTC, unit = "15 minutes") # so that we can later match them exactely
+    DatetimeRound = lubridate::round_date(DatetimeUTC, unit = "15 minutes") # so that we can later match them exactely
     )
 ```
 
